@@ -57,7 +57,11 @@ react的思想是将页面拆分成一个个独立的，可以复用的组件，
 我们一般写组件的时候，希望写纯的function 组件，但是随着业务的复杂，不得不将原来的pureFunction 改回去 class
 这个事情也是非常让人烦恼的。
 
-### 如何保证多个useState 相互独立:
+### 如何保证多个useState 相互独立，按照顺序执行:
+react 规定我们必须把hooks写在函数的最外层，不能写在if else 等条件语句中，来确保hooks执行顺序一致。
+
+### 什么是Effect Hooks
+
 
 
 
