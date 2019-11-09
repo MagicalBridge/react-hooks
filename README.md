@@ -61,6 +61,56 @@ react的思想是将页面拆分成一个个独立的，可以复用的组件，
 react 规定我们必须把hooks写在函数的最外层，不能写在if else 等条件语句中，来确保hooks执行顺序一致。
 
 ### 什么是Effect Hooks
+我们写的有状态组件，通常会产生很多的副作用，（side effect） 比如发起ajax 请求获取数据，添加一些监听注册和取消注册
+手动修改dom等等，我们之前把这些副作用的函数写在生命周期的钩子里面，比如didmount didupdate
+
+比较推荐的做法：给每一个副作用一个单独的effect 钩子 这样一来，这些副作用不再一股脑的在生命周期钩子函数中，
+代码变得更加清晰。
+
+### effect 做了什么？
+替代了我们之前的 didmount didupdate 实际上 react 首次渲染和之后的每次渲染都会调用一遍传给useEffect函数
+useEfffect 中的更新渲染是异步执行的,之前的在生命周期中的代码是同步执行的，
+
+### 如何解绑 effect带来的副作用
+这种场景很常见，当我们在 componentDidMount 中添加一个注册，我们得在componentWillUmount中清除掉，如何清除呢？
+让我们传递给useEffect的副作用函数返回一个新的函数即可。
+
+```js
+import { useState, useEffect } from 'react';
+
+function FriendStatus(props) {
+  const [isOnline, setIsOnline] = useState(null);
+
+  function handleStatusChange(status) {
+    setIsOnline(status.isOnline);
+  }
+
+  useEffect(() => {
+    ChatAPI.subscribeToFriendStatus(props.friend.id, handleStatusChange);
+    // 一定注意下这个顺序：告诉react在下次重新渲染组件之后，同时是下次调用ChatAPI.subscribeToFriendStatus之前执行cleanup
+    return function cleanup() {
+      ChatAPI.unsubscribeFromFriendStatus(props.friend.id, handleStatusChange);
+    };
+  });
+
+  if (isOnline === null) {
+    return 'Loading...';
+  }
+  return isOnline ? 'Online' : 'Offline';
+}
+```
+
+effect 函数接收的第二个参数，用第二个参数来告诉react 只有当着个参数发生改变的时候 才执行我们的传递的副作用函数（第一个参数）
+
+```js
+useEffect(()={
+  document.title = `you clicked ${count} times`
+},[count])
+```
+
+
+
+
 
 
 
