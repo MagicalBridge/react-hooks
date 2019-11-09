@@ -103,10 +103,21 @@ function FriendStatus(props) {
 effect 函数接收的第二个参数，用第二个参数来告诉react 只有当着个参数发生改变的时候 才执行我们的传递的副作用函数（第一个参数）
 
 ```js
-useEffect(()={
+useEffect(() => {
   document.title = `you clicked ${count} times`
 },[count])
 ```
+
+### 我们为什么要写自定义的Effect-hooks 
+为什么要自己去写一个Effect-Hooks 这样我们才能把可以复用逻辑抽离出来，变成一个个可以随插拔的插销，哪个组件需要使用，我就插进
+哪一个组件里面, 我们完善一个例子。
+
+
+
+
+
+
+
 
 
 
