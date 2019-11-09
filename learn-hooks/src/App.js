@@ -1,11 +1,11 @@
 import React from 'react'
 import './App.css'
-import SimpleHooks from './components/simpleHooks'
+import DataProvider from './components/DataProvider'
 
 function App() {
   return (
     <div className="App">
-      <SimpleHooks />
+      <DataProvider />
     </div>
   )
 }
