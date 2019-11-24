@@ -277,6 +277,12 @@ const Foo = memo(function Foo(props) {
 上面这段代码使用memo包裹了这个无状态组件
 
 
+## react-hooks 出现的意义和原因
++ 1、组件复用困难
++ 2、副作用集中在一起
++ 3、this的指向困扰： 内联函数过渡创键新的句柄 类成员函数不能保证this
+
+
 
 
 
