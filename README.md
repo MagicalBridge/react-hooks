@@ -282,6 +282,28 @@ const Foo = memo(function Foo(props) {
 + 2、副作用集中在一起
 + 3、this的指向困扰： 内联函数过渡创键新的句柄 类成员函数不能保证this
 
+## useState
+```js
+function App() {
+  const [count, setCount] = useState(0)
+  return (
+    <div>
+      <button onClick={() => { setCount(count + 1) }}>
+        add {count}
+      </button>
+    </div>
+  );
+}
+export default App
+```
+useState 是怎么知道 返回的是count 和setCount的呢？ 是按照出现的顺序调用的。
+不要再条件语句或者，循环中使用这个state。
+
+如何避免这个问题呢 react 中提供了一个插件  eslint-plugin-react-hooks
+
+useState 可以传入一个函数进行延迟初始化提高效率。
+
+
 
 
 
