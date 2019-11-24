@@ -231,6 +231,50 @@ class Foo extends PureComponent {
 就认为没有发生变化，就没有发生重新渲染这个肯定是不对的。
 
 
+## 使用PureComponent 遇到的陷阱
+上一节中，我们使用PureComponent 这种方式 利用自身的一个shouldComponentUpdate，去判断组件到底是否重新渲染
+这里还需要注意一些bug
+
+我们给foo 组件传入一个匿名函数,点击按钮发现 Foo 重新渲染了。
+```js
+ <Foo name="Mike" cb={() => { }} />
+```
+如何解决这个问题呢？
+
+我们可以将这个匿名函数改写成一个成员函数,这种写法虽然解决了重新渲染的问题但是 callback 里面的this指向保证不了
+```js
+callback(){
+  // 这里面的this 指向保证不了
+}
+……
+
+<Foo name="Mike" cb={this.callback} />
+```
+
+如果这样呢？你会发现 foo 又开始重新渲染了
+```js
+callback(){}
+……
+
+<Foo name="Mike" cb={this.callback.bind(this)} />
+```
+
+那应该怎么办呢？ 有这样一种方案：我们把callback 改写成类属性
+```js
+callback = () =>{}
+……
+
+<Foo name="Mike" cb={this.callback} />
+```
+
+到这里还是没有讲解mem的用法，对于foo组件来说,是一个无状态组件 我们完全可以改写成函数的形式；
+```js
+const Foo = memo(function Foo(props) {
+  console.log('Foo render')
+  return <div>{props.name}</div>
+})
+```
+上面这段代码使用memo包裹了这个无状态组件
 
 
 
