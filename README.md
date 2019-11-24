@@ -304,6 +304,79 @@ useState 是怎么知道 返回的是count 和setCount的呢？ 是按照出现�
 useState 可以传入一个函数进行延迟初始化提高效率。
 
 
+## Effect-hooks
+常见的副作用：
++ 1、绑定事件
++ 2、网络请求
++ 3、访问dom
+这些副作用都在组件的渲染行为之外，副作用的调用时机一般是放在`mount`之后 `update`之后 `unmount`之前
+
+现在我们有了`useEffect`了，useEffect 一般是在render之后调用，并且根据自身的状态选择调用或者不调用。
+第一次的调用就相当于 `componentDidMount` 后面的调用都相当于 `componentDidUpdate` 之前我们在这两个生命周期函数中
+可能会编写相同的代码，现在我们不需要关心这个问题了。
+
+同样的 useEffect 还可以返回一个函数，这个函数的执行时机很重要，称之为 clean callback
+: 这个回调函数的作用是清除上一次副作用遗留下来的状态。比如一个组件在第三次 第五次 第七次渲染后执行的逻辑
+那么回调函数就会在 第四次 第六次 第八次 渲染之前执行，严格来讲是在前一个视图被清除之前。
+
+如果useEffect 只在第一次调用，返回的回调函数只会在组件卸载之前调用了。
+
+```js
+function App() {
+  const [count, setCount] = useState(0)
+  const [size, setSize] = useState({
+    width: document.documentElement.clientWidth,
+    height: document.documentElement.clientHeight
+  })
+
+  const onResize = () => {
+    setSize({
+      width: document.documentElement.clientWidth,
+      height: document.documentElement.clientHeight
+    })
+  }
+  // 使用useEffect 设置窗口title
+  useEffect(() => {
+    document.title = count
+  })
+
+  useEffect(() => {
+    window.addEventListener('resize', onResize, false)
+    // return一个回调函数 回调函数在视图销毁之前触发，有两种销毁的原因
+    // 1、重新渲染，2、组件卸载
+    return () => {
+      window.removeEventListener('resize', onResize, false)
+    }
+  }, [])
+
+  return (
+    <div>
+      <button onClick={() => { setCount(count + 1) }}>
+        add {count}
+        size:{size.width}x{size.height}
+      </button>
+    </div>
+  );
+}
+```
+
+上面这个函数是如何解决 我们说的那三个问题的呢？
+1、首先 设置title 的事情 只在一个useEffect 上面写了一次。
+2、不同的逻辑放在不同的useEffect 里面处理，这就做到了关注点分离
+
+显然第一个useEffect是一直在调用，第二个就只调用一次。
+
+useEffect的第二个参数的含义： 只有数组的每一项都不变的情况下，才会阻止effect重新执行，
+第一次渲染之后，useEffect 肯定会执行，下一次什么时候再执行取决于数组每一项的对比，
+这里有两个特例，什么都不传递，每次渲染都会执行，传入空的数组，由于空数组和空数组是相同的
+因此useEffect 只会在第一次执行一次.
+
+
+我们描述一个场景 就是不断的绑定和解绑事件。
+
+
+
+
 
 
 
