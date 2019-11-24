@@ -125,9 +125,42 @@ createContext 这个api 提供了两个函数 provider consume
 当时在feedback 这个组件中最早使用这个时候 那时候感觉写的还不错，但是使用这种中间工具的时候确实感觉精简了不少
 feedback的改造使用这个完成。 这个技巧可以更多在跨层级的属性中进行使用
 
-### 如果组件具有多个context应该怎么做呢？ 
-这个老师说的是 是可以进行嵌套的，这种嵌套的规则顺序并不是很重要
-只要能够响应就好。
+## 如果组件具有多个context应该怎么做呢？ 
+这个老师说的是 是可以进行嵌套的，这种嵌套的规则顺序并不是很重要。
+
+## 06 使用contextType静态属性
+在Leaf 这个组件中,使用了 consume 这个组件，使用的时候并不是很优雅，我们想要换一种方式去处理它。
+这个时候context-Type排上了用场
+```js
+import React, { Component } from 'react';
+import { BatteryContext } from '../utils/Context'
+
+class Leaf extends Component {
+  // 这是一个静态属性
+  static contextType = BatteryContext
+  render() {
+    // 使用this.context 拿到当前的这个 context
+    const battery = this.context
+    return (
+      <h1>Battery:{battery}</h1>
+    )
+  }
+}
+
+export default Leaf;
+```
+上面我们使用context解决的是变成开发的效率问题。那么下面我们使用 lazy 和 Suspense 解决的是性能问题
+
+## Lazy Suspense
+背景：我们说在项目运行的时候，有写功能可能一直没有被激活，但是代码依然被下载进了用户的浏览器上。这种是有优化空间的。
+延迟加载的场景有图片懒加载。
+
+webpack 中有个 `code splitting` 将页面认为的划分为多个页面产出。
+我们平时在项目中使用的import 是一种静态导入模块的应用，实际上，import 还可以动态导入文件，返回的是一个`promise`
+```js
+import('./detail.js').then(...)
+```
+
 
 
 
