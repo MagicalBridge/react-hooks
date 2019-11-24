@@ -6,15 +6,22 @@ class App extends Component {
   state = {
     hasError: false,
   }
-  // didcatch
-  componentDidCatch() {
-    this.setState({
-      hasError: true
-    })
+  // 使用这个生命周期函数可以设置state的值
+  // componentDidCatch() {
+  //   this.setState({
+  //     hasError: true
+  //   })
+  // }
+
+  // 或者使用一个静态的属性
+  static getDerivedStateFromError(error) {
+    // Update state so the next render will show the fallback UI.
+    return { hasError: true };
   }
+
   render() {
-    if(this.state.hasError){
-      return(
+    if (this.state.hasError) {
+      return (
         <div>ERROR</div>
       )
     }
