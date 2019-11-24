@@ -1,35 +1,41 @@
-import React, { Component, lazy, Suspense } from 'react'
+import React, { Component, PureComponent } from 'react'
 import './App.css'
 
-const About = lazy(() => /* webpackChunkName: "about" */ import('./components/About.jsx'))
+// 使用组件自身的 shouldComponentUpdate
+// class Foo extends Component {
+//   shouldComponentUpdate(nextProps, nextState) {
+//     if (nextProps.name === this.props.name) {
+//       return false
+//     }
+//     return true
+//   }
+//   render() {
+//     console.log('Foo render')
+//     return null
+//   }
+// }
+
+// 使用 PureComponent  下面这种写法也不会重新触发重新渲染
+class Foo extends PureComponent {
+  render() {
+    console.log('Foo render')
+    return null
+  }
+}
+
+
 class App extends Component {
   state = {
-    hasError: false,
+    count: 0,
   }
-  // 使用这个生命周期函数可以设置state的值
-  // componentDidCatch() {
-  //   this.setState({
-  //     hasError: true
-  //   })
-  // }
-
-  // 或者使用一个静态的属性
-  static getDerivedStateFromError(error) {
-    // Update state so the next render will show the fallback UI.
-    return { hasError: true };
-  }
-
   render() {
-    if (this.state.hasError) {
-      return (
-        <div>ERROR</div>
-      )
-    }
     return (
       <div>
-        <Suspense fallback={<div>loading</div>}>
-          <About></About>
-        </Suspense>
+        <button
+          onClick={() => this.setState({ count: this.state.count++ })}>
+          add
+        </button>
+        <Foo name="Mike" />
       </div>
     )
   }

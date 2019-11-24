@@ -167,6 +167,69 @@ react中的lazy函数 将react的导入行为封装成react组件。一旦封装
 
 ## 错误边界 
 如果组件被人为的阻止了加载,加载错误需要被捕获，这种捕获可以放在错误边界里面出处理。
+这里有两种捕获错误边界的做法：
+  第一种使用componentDitCatch
+  第二种使用react中的一个静态的方法 
+  getDriverdStateFromError(error){
+    // 在里面直接 return 状态
+  }
+```js
+ state = {
+    hasError: false,
+  }
+  // 使用这个生命周期函数可以设置state的值
+  componentDidCatch() {
+    this.setState({
+      hasError: true
+    })
+  }
+
+  // 或者使用一个静态的属性
+  static getDerivedStateFromError(error) {
+    // Update state so the next render will show the fallback UI.
+    return { hasError: true };
+  }
+```
+
+## memo
+react 作为个视图库，当数据变化的时候会自动的更新状态，重新渲染视图，这点本来就是应该的，
+但是有时候当我们的视图没有更新的时候。也渲染这就说不过去了
+
+我们在dev-08 这个项目中声明了一`App`的子组件这个组件f放在app 内部，当app 内部的状态值发生变化的时候
+app会重新渲染，这个是肯定的，但是我们并不希望foo 这个组件重新渲染。应该如何做呢？
+
++ 1、react 中有一个shouldComponentUpdate(nextProps,nextState ){} 这个生命周期函数，这个生命周期函数的参数是下一次渲染周期的props和state, 如果这个函数返回fasle 那么这个组件就不会发生渲染，在这个例子中，我们认为，只要传入的name的值不变就不需要重新渲染
+
+```js
+class Foo extends Component {
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.name === this.props.name) {
+      return false
+    }
+    return true
+  }
+  render() {
+    console.log('Foo render')
+    return null
+  }
+}
+```
+在foo组件中添加代码在次点击 add Foo组件不会重新渲染
+
++ 2、我们可以使用PureComponent 进行简化,使用 PureComponent 只是对第一层级的数据进行对比。
+
+```js
+class Foo extends PureComponent {
+  render() {
+    console.log('Foo render')
+    return null
+  }
+}
+```
+如果接受的是一个复杂的数据类型，这个PureComponent 就不奏效了。
+为什么呢 因为 PureComponent 自身携带的 shouldComponentDidUpate 本身携带的句柄没有发生变化，这个时候
+就认为没有发生变化，就没有发生重新渲染这个肯定是不对的。
+
 
 
 
