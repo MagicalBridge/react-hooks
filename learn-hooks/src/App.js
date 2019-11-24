@@ -1,23 +1,29 @@
-import React, { Component } from 'react'
-import { BatteryContext } from './utils/Context.jsx'
-import Middle from './components/Middle'
+import React, { Component, lazy, Suspense } from 'react'
 import './App.css'
 
-
+const About = lazy(() => /* webpackChunkName: "about" */ import('./components/About.jsx'))
 class App extends Component {
   state = {
-    battery: 60,
-    onLine: false
+    hasError: false,
+  }
+  // didcatch
+  componentDidCatch() {
+    this.setState({
+      hasError: true
+    })
   }
   render() {
-    const { battery } = this.state
+    if(this.state.hasError){
+      return(
+        <div>ERROR</div>
+      )
+    }
     return (
-      <BatteryContext.Provider value={battery}>
-        <button type="button" onClick={() => this.setState({ battery: battery + 1 })}>
-          press
-          </button>
-        <Middle></Middle>
-      </BatteryContext.Provider>
+      <div>
+        <Suspense fallback={<div>loading</div>}>
+          <About></About>
+        </Suspense>
+      </div>
     )
   }
 }
