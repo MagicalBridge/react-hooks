@@ -376,6 +376,56 @@ useEffect的第二个参数的含义： 只有数组的每一项都不变的情�
 
 
 
+## useMemo 和 useCallback 这连个api
+memo 的主要的作用是优化组件的重渲染，是对函数或者无状态组件的一种封装和实现形式。
+useMemo 则定义了一段函数逻辑是否重复执行。判定依赖是否发生改变。
+
+```js
+useMemo(()=> {
+ // something
+},[])
+```
+这个和useEffect的形式差不多,接收一个函数 ，第二个参数是一个数组，如果不传递第二个参数，则useMemo 每次都需要执行。
+这个是不能接受的。
+
+```js
+function Count(props) {
+  return (
+    <div>{props.count}</div>
+  )
+}
+
+function App() {
+  const [count, setCount] = useState(0)
+  // useMemo 是需要一个返回值的 这个依赖count 也就是说，如果count 发生变化 那么 这个useMemo 就会执行
+  // 否则不会执行。
+  const double = useMemo(() => {
+    return count * 2
+  }, [count])
+  
+  return (
+    <div>
+      <button onClick={() => { setCount(count + 1) }}>
+        add {count}  double：{double}
+      </button>
+      <Count count={count} />
+    </div>
+  );
+}
+```
+上面的例子中,useMemo 接收一个函数这个函数 需要一个返回值, 返回值也是可以参与渲染。
+我们将上面函数做一下修改，条件渲染，将数组的中的参数变成 [count===3] 这是一个布尔值
+
+
+
+
+
+
+
+
+
+
+
 
 
 
