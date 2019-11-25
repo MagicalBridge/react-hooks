@@ -416,6 +416,13 @@ function App() {
 上面的例子中,useMemo 接收一个函数这个函数 需要一个返回值, 返回值也是可以参与渲染。
 我们将上面函数做一下修改，条件渲染，将数组的中的参数变成 [count===3] 这是一个布尔值
 
+## useMemo 使用中遇到的问题：
+我在useMemo的第二数组中，使用了 [count === 3] 这个在useMemo 看来是一个复杂的表达式，想要我改掉
+因此在warning中写了这个内容：
+React Hook useMemo has a complex expression in the dependency array. Extract it to a separate variable so it can be statically checked
+React Hook useMemo在依赖项数组中有一个复杂的表达式。将其提取到一个单独的变量中，以便可以对其进行静态检查
+
+
 
 
 
