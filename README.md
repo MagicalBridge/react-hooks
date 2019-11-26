@@ -473,8 +473,31 @@ function App() {
   如果有一个定时器 定时器是一个副作用 应该放在 useEffect上面
   另一个清除定时器的功能也放在 useEffect 上面。
 
-
 ## 自定义hooks 我们将 count的逻辑单独封装出来
+  将一些公共的功能抽象出来，变成hooks 这样写出来的自定义hooks 和函数式组件没有什么区别。
+```js
+// 这里定义了一个自定义的 hooks 使用use 开头
+// 接收一个参数作为默认的参数
+function useCount(defaultCount) {
+  const [count, setCount] = useState(defaultCount)
+  let it = useRef()
+  //只执行一次
+  useEffect(() => {
+    it.current = setInterval(() => {
+      setCount(count => count + 1)
+    }, 1000)
+  }, [])
+  // 每次都检查
+  useEffect(() => {
+    if (count >= 10) {
+      clearInterval(it.current)
+    }
+  })
+  return [count]
+}
+```
+
+同时Hooks还可以
 
 
 
