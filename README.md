@@ -452,6 +452,8 @@ function App() {
     console.log('Click')
   }
 
+  
+
   return (
     <div>
       <button onClick={() => { setCount(count + 1) }}>
@@ -463,6 +465,13 @@ function App() {
 }
 ```
 
+## useRef 
+  + 1、获取组件或者DOM节点的句柄
+  + 2、渲染周期之间共享数据的存储
+
+  为什么想要获取句柄？因为想要调用子组件的成员方法。
+  如果有一个定时器 定时器是一个副作用 应该放在 useEffect上面
+  另一个清除定时器的功能也放在 useEffect 上面。
 
 
 
