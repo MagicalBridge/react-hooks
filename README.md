@@ -474,6 +474,9 @@ function App() {
   另一个清除定时器的功能也放在 useEffect 上面。
 
 
+## 自定义hooks 我们将 count的逻辑单独封装出来
+
+
 
 
 
