@@ -1,4 +1,4 @@
-import React, { useState, useMemo,memo } from 'react'
+import React, { useState, useMemo, memo } from 'react'
 import './App.css'
 
 // 函数组件
@@ -11,7 +11,7 @@ const Count = memo(function Count(props) {
 
 function App() {
   const [count, setCount] = useState(0)
-  
+
   /**
    * 如果将数组中的参数变成一个布尔值输出看看点击效果
    * 点击前两次的时候 没有任何的变化，第三次的时候count===3变成了true 执行
@@ -20,13 +20,17 @@ function App() {
   const double = useMemo(() => {
     return count * 2
   }, [count === 3])
-  
+
+  const onClick = () => {
+    console.log('Click')
+  }
+
   return (
     <div>
       <button onClick={() => { setCount(count + 1) }}>
         add {count}  double：{double}
       </button>
-      <Count count={double} />
+      <Count count={double} onClick={onClick} />
     </div>
   );
 }

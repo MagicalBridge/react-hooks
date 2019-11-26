@@ -422,6 +422,47 @@ function App() {
 React Hook useMemo has a complex expression in the dependency array. Extract it to a separate variable so it can be statically checked
 React Hook useMemo在依赖项数组中有一个复杂的表达式。将其提取到一个单独的变量中，以便可以对其进行静态检查
 
+## 如何引出useCallBack这个函数:
+在下面这段逻辑中，即使count组件中传入的 double 没有变化 依然重新触发了渲染，这个是为什么呢？
+因为我们传入了函数句柄发生了变化，（App重新渲染了，导致属性也重新改变了）
+
+上一节我们学习了useMemo 这个函数的和 memo 区别在于传入的回调函数可以确认更新或者不更新
+
+```js
+const Count = memo(function Count(props) {
+  console.log('count render');
+  return (
+    <div>{props.count}</div>
+  )
+})
+
+function App() {
+  const [count, setCount] = useState(0)
+
+  /**
+   * 如果将数组中的参数变成一个布尔值输出看看点击效果
+   * 点击前两次的时候 没有任何的变化，第三次的时候count===3变成了true 执行
+   * 再次点击又变成false 执行 之后全部为false 不在执行。
+   */
+  const double = useMemo(() => {
+    return count * 2
+  }, [count === 3])
+
+  const onClick = () => {
+    console.log('Click')
+  }
+
+  return (
+    <div>
+      <button onClick={() => { setCount(count + 1) }}>
+        add {count}  double：{double}
+      </button>
+      <Count count={double} onClick={onClick} />
+    </div>
+  );
+}
+```
+
 
 
 
