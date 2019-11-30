@@ -423,13 +423,15 @@ React Hook useMemo has a complex expression in the dependency array. Extract it 
 React Hook useMemo在依赖项数组中有一个复杂的表达式。将其提取到一个单独的变量中，以便可以对其进行静态检查
 
 ## 如何引出useCallBack这个函数:
-在下面这段逻辑中，即使count组件中传入的 double 没有变化 依然重新触发了渲染，这个是为什么呢？
-因为我们传入了函数句柄发生了变化，（App重新渲染了，导致属性也重新改变了）
+在下面这段逻辑中，即使 `Counter` 组件中传入的 `double` 没有变化 依然重新触发了渲染，这个是为什么呢？
+因为我们传入了函数句柄发生了变化，（App重新渲染了(因为count变化了)，传入的onClick 是一个新的onClick）
+这里我们并不希望onClick 频繁的重新变化，毕竟只是一个函数而已
 
-上一节我们学习了useMemo 这个函数的和 memo 区别在于传入的回调函数可以确认更新或者不更新
+上一节我们学习了useMemo 这个函数的和 memo 区别在于传入的回调函数可以确认更新或者不更新，我们可以使用useMemo进行改写一下。
+
 
 ```js
-const Count = memo(function Count(props) {
+const Counter = memo(function Count(props) {
   console.log('count render');
   return (
     <div>{props.count}</div>
@@ -438,31 +440,34 @@ const Count = memo(function Count(props) {
 
 function App() {
   const [count, setCount] = useState(0)
-
-  /**
-   * 如果将数组中的参数变成一个布尔值输出看看点击效果
-   * 点击前两次的时候 没有任何的变化，第三次的时候count===3变成了true 执行
-   * 再次点击又变成false 执行 之后全部为false 不在执行。
-   */
   const double = useMemo(() => {
     return count * 2
   }, [count === 3])
 
-  const onClick = () => {
-    console.log('Click')
-  }
+  // const onClick = useMemo(() => {
+  //   return () => {
+  //     console.log('Click');
+  //   }
+  // }, [])
+
+  // 如果想要使用callback 如何书写呢，其实比useMemo要简单一些，可以省略顶层的函数
+  const onClick = useCallback(() => {
+    console.log('click');
+  }, [])
 
   return (
     <div>
       <button onClick={() => { setCount(count + 1) }}>
         add {count}  double：{double}
       </button>
-      <Count count={double} onClick={onClick} />
+      {/* 给Counter 添加一个函数props */}
+      <Counter count={double} onClick={onClick} />
     </div>
   );
 }
 ```
-
+可以理解为 useCallback 是useMemo的一种变体而已。 使用useCallback 确实不能阻止创建新的函数，useCallback 解决的是
+传入子组件的函数参数过渡变化所造成的重复的渲染问题。
 
 
 
