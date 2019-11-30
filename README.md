@@ -377,16 +377,19 @@ useEffect的第二个参数的含义： 只有数组的每一项都不变的情�
 
 
 ## useMemo 和 useCallback 这连个api
-memo 的主要的作用是优化组件的重渲染，是对函数或者无状态组件的一种封装和实现形式。
-useMemo 则定义了一段函数逻辑是否重复执行。判定依赖是否发生改变。
+memo 的主要的作用是优化组件的重渲染行为，如果传入组件的所有数据都不变化的时候，就不会触发组件的重新渲染，是对函数或者无状态组件的一种封装和实现形式。在hooks环境下，几乎所有的组件都是函数组件，我们使用函数组件使用memo的几率就大的多。
+
+> memo 是定义了一个组件是否重复执行。
+> useMemo 则定义了一段函数逻辑是否重复执行。判定依赖是否发生改变。
 
 ```js
 useMemo(()=> {
  // something
 },[])
 ```
-这个和useEffect的形式差不多,接收一个函数 ，第二个参数是一个数组，如果不传递第二个参数，则useMemo 每次都需要执行。
-这个是不能接受的。
+这个和useEffect的形式差不多, 第一个参数接收一个需要执行的函数 ，第二个参数接收一个依赖变量的逻辑数组，如果不传递第二个参数，则useMemo 每次都需要执行，这意义也就不存在了，如果传入空的数组，只会执行一次,策略和useEffect是一样的，但是有一点和useEffect是有差异的就是调用的时机.
+
+useEffect 执行的是副作用，所以一定是在 **渲染之后** 执行，而useMemo 是需要有返回值的，这个返回值可以直接参与渲染。因此useMemo是在渲染期间完成的。有这样一个一前一后的区别。
 
 ```js
 function Count(props) {
@@ -397,8 +400,8 @@ function Count(props) {
 
 function App() {
   const [count, setCount] = useState(0)
-  // useMemo 是需要一个返回值的 这个依赖count 也就是说，如果count 发生变化 那么 这个useMemo 就会执行
-  // 否则不会执行。
+  // useMemo 是需要一个返回值的 这个依赖count也就是说，如果count 发生变化 那么 这个useMemo 就会执行
+  // 否则不会执行。需要注意和强调的是 useMemo 是在渲染之中执行的,而useEffect 是在渲染之后执行的副作用。
   const double = useMemo(() => {
     return count * 2
   }, [count])
@@ -415,36 +418,34 @@ function App() {
 ```
 上面的例子中,useMemo 接收一个函数这个函数 需要一个返回值, 返回值也是可以参与渲染。
 我们将上面函数做一下修改，条件渲染，将数组的中的参数变成 [count===3] 这是一个布尔值
+可以预想的结果，起初的时候 double 不发生变化，当count===3 这个条件成立的时候 第一次发生了
+变化，当count 变成4的时候又发生了变化，这个时候当且仅当这个数组中的条件改变的时候 useMemo才会重新
+触发。
 
+```js
+function Count(props) {
+  return (
+    <div>{props.count}</div>
+  )
+}
 
+function App() {
+  const [count, setCount] = useState(0)
+  // useMemo 是需要一个返回值的 这个依赖count也就是说，如果count 发生变化 那么 这个useMemo 就会执行
+  // 否则不会执行。需要注意和强调的是 useMemo 是在渲染之中执行的,而useEffect 是在渲染之后执行的副作用。
+  const double = useMemo(() => {
+    return count * 2
+  }, [count===3])
+  
+  return (
+    <div>
+      <button onClick={() => { setCount(count + 1) }}>
+        add {count}  double：{double}
+      </button>
+      <Count count={count} />
+    </div>
+  );
+}
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+useMemo 还可以依赖useMemo，但是一定不要循环依赖，这样肯定会将浏览器高崩溃的
